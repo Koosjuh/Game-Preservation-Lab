@@ -1,82 +1,66 @@
-# 007 First Light - Comprehensive Preservation Status Analysis
+# 007 First Light - Corrected Preservation Status Analysis
 
-## Project
+## Scope
 
-007 First Light Game Preservation Analysis
+This document consolidates all completed testing scenarios for the PlayStation 5 version of 007 First Light.
 
----
+This revision corrects the earlier timeline and clearly separates:
 
-# Executive Summary
+* fully online baseline installation/startup
+* offline booting of an already-installed game
+* fully fresh offline reinstall-from-disc testing
 
-This analysis investigates whether the PlayStation 5 version of 007 First Light can be installed, launched, and played without internet connectivity, and whether long-term preservation risk exists if online infrastructure disappears.
+All conclusions below are based strictly on:
 
-Testing consisted of:
+* directly observed gameplay/install behavior
+* packet captures
+* DNS activity
+* TCP connection behavior
+* observed installation state
+* observed playable content state
 
-* fully online startup baseline captures
-* offline startup testing
-* future-date startup testing
-* offline reinstall-from-disc testing
-* repeated boot testing after installation
-* packet capture analysis during all major phases
-
-The evidence shows:
-
-* the game DOES eventually become playable offline
-* the game DOES NOT immediately hard-fail offline
-* startup behavior is heavily internet-first
-* fresh offline disc installation initially stalled for an extended period
-* startup retry/timeout behavior is extremely aggressive
-* the game repeatedly attempts PlayStation platform connectivity before transitioning into offline-capable operation
-
-Most importantly:
-
-```text
-Fresh offline installation did eventually begin copying/installing after prolonged timeout behavior.
-```
-
-This substantially changes the preservation interpretation versus the earlier assumption that offline installation fully failed.
-
-However:
-
-The offline user experience remains severely degraded. With only the first mission playable.
+No unsupported assumptions are made.
 
 ---
 
-# Test Environment
+# Test Timeline
 
-| Field                    | Value                               |
-| ------------------------ | ----------------------------------- |
-| Platform                 | PlayStation 5                       |
-| Distribution             | Physical Disc                       |
-| Network State            | Gateway reachable, internet blocked |
-| Capture Method           | Gateway-level tcpdump               |
-| DNS Availability         | Yes                                 |
-| Outbound Internet        | Blocked                             |
-| Install State            | Multiple scenarios tested           |
-| System Time Manipulation | Approximately +2 years               |
-| PS5 Login State          | Local/offline account session       |
+| Test   | Scenario                                                  | Internet | Installed Before Test |
+| ------ | --------------------------------------------------------- | -------- | --------------------- |
+| Test 1 | Fully online install + startup baseline                   | Yes      | No                    |
+| Test 2 | Previously installed game booted offline with future date | No       | Yes                   |
+| Test 3 | Fresh reinstall from disc fully offline with future date  | No       | No                    |
 
 ---
 
-# Test Sequence
+# Test 1 - Fully Online Install and Startup Baseline
 
-## Test 1 - Fully Online Baseline Startup
+## Capture
 
-### Capture
-
-```text
+```text id="nvtfg7"
 2026_05_27_007FirstLight_RegularStartup_Online.pcap
 ```
 
-### Observed Behavior
+---
 
-The game launched normally while fully connected to the internet.
+# Test 1 - Conditions
 
-### Observed Domains
+| Field         | Value                                     |
+| ------------- | ----------------------------------------- |
+| Internet      | Available                                 |
+| PS5 Date      | Normal                                    |
+| Install State | Fresh install                             |
+| Goal          | Establish normal online behavior baseline |
 
-Confirmed directly from packet captures:
+---
 
-```text
+# Test 1 - Packet Capture Findings
+
+## Confirmed Domains Contacted
+
+Observed directly:
+
+```text id="u2vbr9"
 ena.net.playstation.net
 ps5.np.playstation.net
 sgst.prod.dl.playstation.net
@@ -91,85 +75,112 @@ iokntprod01.ioi-cloud.com
 knteventsprod.ioi-cloud.com
 ```
 
-### Observed Infrastructure
+---
 
-Confirmed:
+# Test 1 - Confirmed Network Behavior
 
-* PlayStation Network communication
-* PlayStation CDN communication
-* IO Interactive cloud infrastructure communication
-* Azure Blob Storage usage
-* telemetry/event infrastructure communication
+Observed:
 
-### Important Technical Observation
+* successful outbound TCP handshakes
+* successful TLS establishment
+* PlayStation infrastructure communication
+* IO Interactive cloud communication
+* CDN communication
+* telemetry infrastructure communication
 
-Successful outbound HTTPS communication occurred during this baseline online startup.
+This proves:
 
-Unlike later offline tests:
-
-* TCP handshakes succeeded
-* TLS sessions established successfully
+```text id="zjiy9g"
+During fully online installation/startup, the game communicates with both PlayStation infrastructure and IO Interactive infrastructure.
+```
 
 ---
 
-# Test 2 - Offline Startup With Future Date Manipulation
+# Test 1 - Installation State
 
-## Test Conditions
+Observed:
 
-* internet blocked
-* gateway reachable
-* DNS available
-* system clock advanced approximately one year
-* previously installed game
+* full game installation completed
+* all missions playable
+* game functioned normally online
+
+Version observed:
+
+```text id="kkz4d9"
+1.0
+```
 
 ---
 
-## Capture Files
+# Test 2 - Previously Installed Game Booted Offline With Future Date
 
-```text
+## Captures
+
+```text id="kjlwm7"
 2026_05_27_007FirstLightOfflinechangedate.pcap
 2026_05_27_007FirstLightOfflinechangedate2.pcap
 ```
 
 ---
 
-# Observed Startup Behavior
+# Test 2 - Conditions
 
-## Timeline
+| Field                      | Value                                                        |
+| -------------------------- | ------------------------------------------------------------ |
+| Game Installed Before Test | Yes                                                          |
+| Install Origin             | Fully online install from Test 1                             |
+| Internet                   | Blocked                                                      |
+| Gateway Access             | Available                                                    |
+| DNS                        | Available                                                    |
+| PS5 Date                   | Advanced approximately +1 year                               |
+| Goal                       | Determine survivability of previously installed game offline |
 
-| Time        | Event                        |
-| ----------- | ---------------------------- |
-| ~22:02      | Startup initiated            |
-| ~22:18      | Game successfully booted     |
-| ~16 minutes | Total observed startup delay |
+---
 
-### User-Facing Behavior
+# Test 2 - Observed Startup Behavior
 
 Observed directly:
 
 * splash screen displayed
 * “Please Wait” loading bar displayed
-* no immediate error message
-* no hard entitlement denial
 * prolonged apparent stall
+* no entitlement denial
+* no internet-required popup
 * eventual successful startup
 
-After boot:
+Approximate observed startup delay:
 
-```text
-Only the first mission was available.
-The game stated the full game needed to finish downloading/installing.
+```text id="3mlybt"
+~15 minutes
 ```
 
-This is critically important.
+No exact packet-derived startup duration was measured in this test.
 
 ---
 
-# Packet-Level Findings
+# Test 2 - Gameplay State
 
-## Directly Observed DNS Queries
+Critically important:
 
-```text
+```text id="t9hjhx"
+ALL missions were playable offline in Test 2.
+```
+
+This is because:
+
+```text id="hrd7g7"
+The game had already been fully installed online during Test 1 before internet was removed.
+```
+
+This materially changes the preservation interpretation.
+
+---
+
+# Test 2 - Packet-Level Findings
+
+## Confirmed DNS Queries
+
+```text id="i4czvq"
 ps5.np.playstation.net
 qgve.dl.playstation.net
 telemetry-console.api.playstation.com
@@ -180,117 +191,208 @@ ppr-crl.rnps.dl.playstation.net
 
 ---
 
-# Directly Observed Connection Attempts
-
-Observed repeated outbound HTTPS attempts to:
-
-```text
-e40436.api8.akamaiedge.net
-e274.d.akamaiedge.net
-e7320.dscb.akamaiedge.net
-e16671.d.akamaiedge.net
-a1092.d.akamai.net
-20.105.216.1
-```
-
----
-
-# Critical Packet Observation
-
-The captures showed:
-
-* repeated SYN packets
-* repeated retry behavior
-* repeated DNS lookups
-* NO successful outbound TCP handshakes
-* NO successful TLS session establishment
-
-This proves:
-
-```text
-The PlayStation 5 repeatedly attempted online communication while internet access remained unavailable.
-```
-
----
-
-# What The Packet Captures Prove
-
-The captures directly demonstrate:
-
-* startup repeatedly attempts PlayStation infrastructure communication
-* startup repeatedly attempts CDN/download infrastructure communication
-* startup repeatedly retries unavailable services
-* startup eventually falls back into offline-capable behavior
-
-The captures do NOT prove:
-
-* hard always-online DRM
-* mandatory telemetry lockouts
-* mandatory account validation
-* mandatory IOI cloud validation
-
-because:
-
-* successful IOI cloud communication did not occur in offline tests
-* the game eventually became playable offline
-
----
-
-# Test 3 - Fresh Offline Disc Install Attempt
-
-## Test Procedure
-
-Sequence:
-
-1. Game uninstalled
-2. Disc ejected
-3. PS5 fully powered down
-4. Logged in locally
-5. Network capture started
-6. Disc inserted
-7. Internet remained blocked
-
----
-
-# Initial Install Behavior
+# Test 2 - Confirmed Connection Behavior
 
 Observed:
 
-* disc icon continuously spun
-* installation did NOT immediately begin
-* no visible download progress
-* no visible installation progress
-* no immediate error
+* repeated outbound TCP SYN packets
+* repeated retry attempts
+* repeated DNS lookups
+* NO successful outbound TCP handshakes
+* NO successful TLS sessions
 
-After prolonged waiting:
+This proves:
 
-```text
-The install/copy process eventually began.
+```text id="k6xy8h"
+The PlayStation 5 repeatedly attempted internet communication but never established successful external connectivity.
 ```
-
-This is extremely important.
 
 ---
 
-# Packet Capture
+# Test 2 - Most Important Finding
 
-## Capture File
+Despite:
 
-```text
-2026_05_27_PS5BootUp_007FirstLightNoInternetInstall.pcap
+* unavailable internet
+* future-date manipulation
+* failed external connectivity
+
+the previously installed game:
+
+```text id="sfkzdy"
+Eventually fully booted offline and all missions remained playable.
 ```
 
-Additional capture:
+This is a major preservation-positive finding.
 
-```text
+---
+
+# Test 2 - Preservation Interpretation
+
+The evidence supports:
+
+```text id="q1xj4v"
+A previously fully installed copy of 007 First Light remains fully playable offline after prolonged retry/timeout behavior.
+```
+
+However:
+
+Observed startup degradation remained severe.
+
+---
+
+# Test 3 - Fresh Offline Reinstall From Disc
+
+## Captures
+
+```text id="jhn10n"
+2026_05_27_PS5BootUp_007FirstLightNoInternetInstall.pcap
 2026_05_27_PS5BootUp_007FirstLightNoInternetInstall2.pcap
 ```
 
 ---
 
-# Directly Observed Domains During Install
+# Test 3 - Conditions
 
-```text
+| Field                      | Value                                         |
+| -------------------------- | --------------------------------------------- |
+| Game Installed Before Test | No                                            |
+| Disc Ejected Prior         | Yes                                           |
+| PS5 Rebooted               | Yes                                           |
+| Internet                   | Blocked                                       |
+| Gateway Access             | Available                                     |
+| DNS                        | Available                                     |
+| PS5 Date                   | Future date still active                      |
+| Goal                       | Determine fresh offline install survivability |
+
+---
+
+# Test 3 - Exact Procedure
+
+Sequence:
+
+1. Game fully uninstalled
+2. Disc ejected
+3. PlayStation 5 rebooted
+4. Local/offline login used
+5. Network capture started
+6. Disc inserted
+7. Internet remained unavailable
+
+This simulates:
+
+```text id="8j8grl"
+A future scenario where a user attempts to install the game years later on a fresh PlayStation 5 without PlayStation infrastructure access.
+```
+
+---
+
+# Test 3 - Initial Install Behavior
+
+Observed directly:
+
+* disc icon continuously spun
+* installation did NOT immediately begin
+* no install progress initially visible
+* prolonged waiting occurred
+
+This behavior persisted for an extended period.
+
+---
+
+# Test 3 - Critical Install Finding
+
+At the end of the first capture:
+
+```text id="t2p8dg"
+The install/copy process finally began.
+```
+
+This is extremely important.
+
+The earlier conclusion that offline installation “failed” was incorrect.
+
+The evidence actually demonstrates:
+
+```text id="8lx3d9"
+Fresh offline installation eventually proceeds after prolonged retry/timeout behavior.
+```
+
+---
+
+# Test 3 - Installation State
+
+Observed:
+
+```text id="gm3t8t"
+45.9 GB installed/copied from disc.
+```
+
+This directly confirms:
+
+```text id="i4o0m4"
+Substantial game data exists on the physical disc itself.
+```
+
+---
+
+# Test 3 - Startup Timeline After Install
+
+Observed:
+
+| Time        | Event             |
+| ----------- | ----------------- |
+| ~22:02      | Startup initiated |
+| ~22:18      | Game booted       |
+| ~16 minutes | Startup delay     |
+
+This timing was directly observed by the tester.
+
+---
+
+# Test 3 - Gameplay State After Fresh Offline Install
+
+Critically important:
+
+```text id="uyzqvn"
+ONLY the first mission was playable.
+```
+
+The game indicated:
+
+```text id="hs3qnu"
+The full game needed to finish downloading/installing.
+```
+
+This is the single most important preservation limitation identified in the project.
+
+---
+
+# Test 3 - Version Observation
+
+Observed directly:
+
+| Scenario              | Version |
+| --------------------- | ------- |
+| Fully online install  | 1.0     |
+| Fresh offline install | 0.1.0   |
+
+No unsupported interpretation should be made regarding:
+
+* metadata state
+* partial installation state
+* placeholder versioning
+* disconnected version logic
+
+The captures cannot determine this.
+
+---
+
+# Test 3 - Packet-Level Findings
+
+## Confirmed DNS Queries
+
+```text id="iglrk6"
 ps5.np.playstation.net
 telemetry-console.api.playstation.com
 envelope2.np.dl.playstation.net
@@ -305,205 +407,127 @@ psnobj.prod.dl.playstation.net
 
 ---
 
-# Critical Installation Observation
-
-The install captures again showed:
-
-* repeated DNS resolution
-* repeated outbound SYN retries
-* NO successful outbound HTTPS sessions
-* prolonged timeout/retry behavior
-
-However:
-
-```text
-The game eventually began copying/installing from disc despite no successful internet connectivity.
-```
-
----
-
-# Installation State
-
-Eventually observed:
-
-```text
-45.9 GB installed/copied
-```
-
-This strongly indicates:
-
-```text
-Substantial game content DOES exist on the disc itself.
-```
-
-This is preservation-positive.
-
----
-
-# Versioning Observation
+# Test 3 - Confirmed Connection Behavior
 
 Observed:
 
-| Scenario        | Reported Version |
-| --------------- | ---------------- |
-| Online install  | 1.0              |
-| Offline install | 0.1.0            |
+* repeated SYN retries
+* repeated DNS lookups
+* NO successful external TCP handshakes
+* NO successful TLS sessions
 
-This is directly observed behavior.
+This proves:
 
-No conclusion can currently be made regarding:
-
-* whether this is placeholder versioning
-* partial install state
-* pre-release numbering
-* disconnected metadata state
-
-because packet captures alone cannot determine this.
-
----
-
-# Post-Install Reboot Testing
-
-After installation:
-
-* game closed
-* game reopened
-
-Observed:
-
-* “Please Wait” loading screen returned
-* startup again appeared stalled
-* game again attempted prolonged startup
-
-This is critically important because it demonstrates:
-
-```text
-The prolonged startup behavior is NOT limited to first boot only.
+```text id="v9b0kp"
+The fresh install process repeatedly attempted PlayStation infrastructure communication while internet remained unavailable.
 ```
 
 ---
 
-# Preservation-Relevant Technical Interpretation
+# Most Important Overall Findings
 
-## What The Captures Definitively Show
+## Confirmed
 
-### Confirmed
+The combined evidence definitively shows:
 
-* PlayStation platform services are heavily contacted during startup/install
-* repeated retry logic occurs when services unavailable
-* startup/install continue only after prolonged timeout behavior
-* offline fallback paths exist
-* installation from disc eventually succeeds offline
-* gameplay eventually becomes available offline
-
----
-
-# What The Captures Do NOT Prove
-
-The captures do NOT prove:
-
-* mandatory always-online DRM
-* mandatory telemetry lockouts
-* mandatory IOI cloud authentication
-* permanent internet requirement
-
-because:
-
-* successful internet sessions never occurred during offline tests
-* game eventually became installable/playable offline
+* the game strongly prefers internet connectivity
+* startup/install retry behavior is extremely aggressive
+* PlayStation infrastructure is heavily contacted
+* offline fallback behavior exists
+* fully installed copies remain fully playable offline
+* fresh offline installation eventually succeeds
+* fresh offline installation results in incomplete gameplay availability
 
 ---
 
-# Preservation Implications
+# Critical Preservation Distinction
 
-## Positive Preservation Findings
+The evidence now clearly supports TWO different preservation outcomes:
+
+## Scenario A - Previously Installed Game
+
+```text id="lf1jlwm"
+Fully playable offline after prolonged startup delay.
+```
+
+---
+
+## Scenario B - Fresh Offline Install Years Later
+
+```text id="ztcjlwm"
+Installation eventually succeeds, but only partial gameplay availability exists.
+```
+
+This distinction is critically important.
+
+---
+
+# Preservation Interpretation
+
+## Preservation-Positive Findings
 
 Confirmed:
 
 * substantial game data exists on disc
-* offline installation eventually succeeds
-* offline gameplay eventually succeeds
-* no permanent online lockout observed
-* no hard entitlement failure observed
-
-These are highly preservation-positive findings.
+* previously installed copies remain fully playable offline
+* no hard always-online DRM lockout observed
+* offline fallback behavior exists
+* startup/install eventually proceed offline
 
 ---
 
-## Negative Preservation Findings
+# Preservation-Negative Findings
 
 Observed:
 
-* approximately 15-16 minute startup delays
-* approximately 15+ minute install delays before copying begins
-* aggressive retry/timeout behavior
-* internet-first startup assumptions
-* degraded offline user experience
-* repeated PlayStation platform dependency attempts
-
-This is not consumer-friendly behavior.
+* severe retry/timeout delays
+* internet-first startup/install assumptions
+* heavy PlayStation infrastructure dependency attempts
+* degraded offline usability
+* fresh offline install only exposes first mission
 
 ---
 
-# Most Important Preservation Finding
+# Final Preservation Classification
 
-The strongest preservation conclusion from all captures combined is:
-
-```text
-007 First Light currently supports degraded offline operation rather than hard online enforcement.
-```
-
-Meaning:
-
-* the game strongly prefers online connectivity
-* startup/install logic heavily expects internet access
-* but offline fallback behavior DOES exist
-
-This fundamentally differs from:
-
-* true always-online games
-* server-authoritative games
-* online entitlement lock systems
+| Area                                     | Assessment            |
+| ---------------------------------------- | --------------------- |
+| Previously Installed Offline Playability | Fully functional      |
+| Fresh Offline Installation               | Eventually functional |
+| Fresh Offline Full Game Availability     | NOT confirmed         |
+| Fresh Offline Partial Game Availability  | Confirmed             |
+| Hard Always-Online Requirement           | Not observed          |
+| Startup/Install Degradation              | Severe                |
+| Consumer Friendliness                    | Poor                  |
+| Preservation Risk                        | Medium-High           |
 
 ---
 
-# Final Classification
+# Final Technical Conclusion
 
-| Area                           | Assessment                        |
-| ------------------------------ | --------------------------------- |
-| Offline Disc Installation      | Eventually successful             |
-| Offline Boot Capability        | Confirmed                         |
-| Offline Gameplay Capability    | Confirmed                         |
-| Immediate Offline Usability    | Poor                              |
-| Hard Always-Online Requirement | Not observed                      |
-| Timeout/Retry Dependency       | Severe                            |
-| Consumer Friendliness          | Poor                              |
-| Preservation Risk              | Medium                            |
-| Long-Term Survivability        | Currently acceptable but degraded |
+The packet captures consistently show both startup and installation repeatedly attempting communication with PlayStation platform infrastructure before eventually transitioning into degraded offline-capable behavior.
 
----
+The captures definitively prove:
 
-# Final Conclusion
-
-The packet captures consistently show the PlayStation 5 and game repeatedly attempting to contact PlayStation platform/CDN/telemetry infrastructure during startup and installation.
-
-During offline testing:
-
-* no successful outbound internet sessions occurred
-* repeated retry behavior was observed
-* startup/install entered prolonged waiting states
-* eventual offline fallback behavior occurred
+* repeated DNS activity
+* repeated outbound HTTPS retry attempts
+* persistent startup/install timeout behavior
+* no successful internet connectivity during offline tests
 
 Most importantly:
 
-```text
-The game eventually installs from disc and eventually becomes playable offline despite unavailable internet connectivity. However only the first mission is playable. According to the game "Only the first mission is available. You need to download the full game to play."
+```text id="xzwk7r"
+A previously fully installed copy of the game remains fully playable offline.
 ```
 
-The approximately 15-16 minute delays before installation/startup progression represent extremely degraded offline behavior and strongly indicate an internet-first startup/install architecture. Further backed by the 49.5GB installation for only the first mission in offline play.
+However:
 
-Current evidence therefore supports the conclusion that:
+```text id="ckm8tk"
+A fresh offline reinstall years later currently only exposes the first mission after installation.
+```
 
-```text
-007 First Light is NOT strictly always-online, but its offline fallback implementation is severely degraded and highly dependent on lengthy timeout/retry behavior before functioning.
+The evidence therefore supports the conclusion that:
+
+```text id="hjlwm1"
+007 First Light is not strictly always-online, but fresh long-term offline reinstall survivability appears degraded and currently does not demonstrate confirmed full-game offline accessibility from disc alone.
 ```
