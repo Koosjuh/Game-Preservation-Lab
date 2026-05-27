@@ -208,6 +208,7 @@ Observed behavior:
 - Game launched successfully
 - All missions playable
 - Version observed: 1.0
+- Game Size 50.89GB
 - Multiple PlayStation and IO Interactive endpoints contacted
 
 Purpose:
@@ -768,7 +769,7 @@ Assessment:
 
 Partial survivability.
 
-This is the more preservation-relevant condition because it represents future reinstall capability.
+This is the more preservation-relevant condition because it represents future reinstall capability. Whilest a large portion of the final game is on disc, it is rendered useless.
 
 ---
 
@@ -784,7 +785,7 @@ The following statements are directly supported by observed evidence:
 - Offline startup behavior includes substantial retry/timeout activity.
 - A previously installed copy remained fully playable offline.
 - A fresh offline reinstall from disc exposed only the first mission.
-- Approximately 45.9 GB of data exists on physical media.
+- Approximately 45.9 GB of data exists on physical media. Final product has 50.89GB of data as per version 1.0.
 - Startup degradation occurred during offline future-date testing.
 
 ## Reasonable Interpretations
@@ -825,6 +826,7 @@ The game demonstrated:
 - successful offline startup
 - substantial offline disc installation capability
 - partial offline gameplay survivability
+- Version 1.0 being 50.89GB where as an offline installation of version 0.1.0 has 49.9GB meaning that more than the 1st mission is on disc.
 
 However:
 
@@ -835,5 +837,5 @@ However:
 
 The most preservation-relevant scenario — a future fresh reinstall from physical media with no online infrastructure available — resulted in only partial gameplay accessibility.
 
-That outcome materially increases long-term preservation risk.
+That outcome materially increases long-term preservation risk. 
 
