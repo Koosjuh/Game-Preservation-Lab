@@ -38,7 +38,7 @@ This substantially changes the preservation interpretation versus the earlier as
 
 However:
 
-The offline user experience remains severely degraded.
+The offline user experience remains severely degraded. With only the first mission playable.
 
 ---
 
@@ -53,7 +53,7 @@ The offline user experience remains severely degraded.
 | DNS Availability         | Yes                                 |
 | Outbound Internet        | Blocked                             |
 | Install State            | Multiple scenarios tested           |
-| System Time Manipulation | Approximately +1 year               |
+| System Time Manipulation | Approximately +2 years               |
 | PS5 Login State          | Local/offline account session       |
 
 ---
@@ -497,14 +497,10 @@ During offline testing:
 Most importantly:
 
 ```text
-The game eventually installs from disc and eventually becomes playable offline despite unavailable internet connectivity.
+The game eventually installs from disc and eventually becomes playable offline despite unavailable internet connectivity. However only the first mission is playable. According to the game "Only the first mission is available. You need to download the full game to play."
 ```
 
-This is a major preservation-positive outcome.
-
-However:
-
-The approximately 15-16 minute delays before installation/startup progression represent extremely degraded offline behavior and strongly indicate an internet-first startup/install architecture.
+The approximately 15-16 minute delays before installation/startup progression represent extremely degraded offline behavior and strongly indicate an internet-first startup/install architecture. Further backed by the 49.5GB installation for only the first mission in offline play.
 
 Current evidence therefore supports the conclusion that:
 
